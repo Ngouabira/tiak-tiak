@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('cni')->nullable();
             $table->string('email')->unique()->nullable();
+            $table->integer('point')->default(0);
             $table->foreignIdFor(Profile::class)->constrained();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
