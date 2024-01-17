@@ -13,9 +13,9 @@ class OrderDeliveryRequest extends Model
 
     protected $guarded = ['id'];
 
-    public function orderDelivery(): HasOne
+    public function deliver(): BelongsTo
     {
-        return $this->HasOne(OrderDelivery::class);
+        return $this->belongsTo(User::class, 'deliver_id');
     }
 
     public function order(): BelongsTo

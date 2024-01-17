@@ -17,13 +17,10 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id');
             $table->foreign('order_id')->references('id')->on('orders');
 
-            $table->string('startposition');
-            $table->string('endposition');
-            $table->double('distance');
-            $table->double('amount');
-            $table->string('status');
+            $table->unsignedBigInteger('deliver_id');
+            $table->foreign('deliver_id')->references('id')->on('users');
 
-            $table->dateTime('accepteddate');
+            $table->string('status')->default('pending');
 
             $table->timestamps();
         });

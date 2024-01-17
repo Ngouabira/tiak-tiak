@@ -37,13 +37,18 @@ class User extends Authenticatable
     ];
 
 
-    public function client(): BelongsTo
+    public function profile(): BelongsTo
     {
         return $this->belongsTo(Profile::class);
     }
 
     public function transactions(): HasMany
     {
-        return $this->HasMany(Transaction::class);
+        return $this->HasMany(Transaction::class, 'client_id');
+    }
+
+    public function orderDeliveries(): HasMany
+    {
+        return $this->hasMany(OrderDelivery::class, 'deliver_id');
     }
 }

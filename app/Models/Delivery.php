@@ -13,18 +13,18 @@ class Delivery extends Model
 
     protected $guarded = ['id'];
 
-    public function deliveries(): HasMany
+    public function deliveryRequest(): HasMany
     {
-        return $this->hasMany(Delivery::class);
+        return $this->hasMany(DeliveryRequest::class);
     }
 
-    public function orderDeliveries(): HasMany
+    public function client(): BelongsTo
     {
-        return $this->hasMany(OrderDelivery::class);
+        return $this->belongsTo(User::class, 'client_id');
     }
 
-    public function profile(): BelongsTo
+    public function deliver(): BelongsTo
     {
-        return $this->belongsTo(Profile::class);
+        return $this->belongsTo(User::class, 'deliver_id');
     }
 }
