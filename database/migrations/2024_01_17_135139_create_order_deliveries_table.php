@@ -25,6 +25,8 @@ return new class extends Migration
             $table->unsignedBigInteger('deliver_id');
             $table->foreign('deliver_id')->references('id')->on('users');
 
+            $table->string('status');
+
             $table->timestamps();
         });
     }

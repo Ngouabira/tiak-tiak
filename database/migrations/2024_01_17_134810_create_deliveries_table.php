@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(DeliveryRequest::class)->constrained();
             $table->unsignedBigInteger('deliver_id');
             $table->foreign('deliver_id')->references('id')->on('users');
+            $table->string('status');
             $table->timestamps();
         });
     }
