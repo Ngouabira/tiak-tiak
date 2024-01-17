@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('order_delivery_requests', function (Blueprint $table) {
             $table->id();
+
+            $table->unsignedBigInteger('order_id');
+            $table->foreign('order_id')->references('id')->on('orders');
+
+            $table->string('startposition');
+            $table->string('endposition');
+            $table->double('distance');
+            $table->double('amount');
+            $table->string('status');
+
+            $table->dateTime('accepteddate');
+
             $table->timestamps();
         });
     }
