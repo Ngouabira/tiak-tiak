@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\OrderDeliveryRequest;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class OrderDeliveryRequestSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class OrderDeliveryRequestSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        OrderDeliveryRequest::factory()->count(5)->create();
     }
 }
