@@ -14,7 +14,7 @@ class TransactionController extends Controller
     public function index()
     {
         $transactions = Transaction::all();
-        return view('transactions.index', compact('transactions'));
+        return response()->json($transactions);
     }
 
     /**
@@ -22,7 +22,15 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        //
+               $data = $request->validate([
+                'amount' => 'required|numeric',
+                'paymentmode' => 'required|string',
+                'client_id' => 'required|exists:users,id',
+            ]);
+    
+            $transaction = Transaction::create($data);
+    
+            return response()->json($transaction, 201);
     }
 
     /**
@@ -30,7 +38,8 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        return view('transactions.show', compact('transaction'));
+        $transaction = Transaction::findOrFail($transaction);
+        return response()->json($transaction);
 
     }
 
@@ -39,7 +48,16 @@ class TransactionController extends Controller
      */
     public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        //
+                $data = $request->validate([
+                    'amount' => 'numeric',
+                    'paymentmode' => 'string',
+                    'client_id' => 'exists:users,id',
+                ]);
+                $transaction = Transaction::findOrFail($transaction);
+                $transaction->update($data);
+        
+                return response()->json($transaction);
+        
     }
 
     /**
@@ -47,6 +65,9 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction = Transaction::findOrFail($transaction);
+                $transaction->delete();
+        
+                return response()->json(null, 204);
     }
 }
