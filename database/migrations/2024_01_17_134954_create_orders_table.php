@@ -19,7 +19,12 @@ return new class extends Migration
 
             $table->unsignedBigInteger('restaurant_id');
             $table->foreign('restaurant_id')->references('id')->on('users');
-            
+
+            //colonne que j'ai ajouté
+            $table->timestamp('confirmed_at')->nullable();
+            $table->timestamp('cancelled_at')->nullable();
+            $table->string('cancellation_reason')->nullable();
+
             $table->timestamps();
         });
     }
