@@ -134,12 +134,6 @@ class OrderLineController extends Controller
     /**
      * Supprimer un produit d'une commande.
      */
-    /**
-     * Supprimer un produit d'une commande.
-     */
-    /**
-     * Supprimer un produit d'une commande.
-     */
     public function destroyProduct(OrderLine $orderLine)
     {
         if ($orderLine->order->confirmed_at) {
@@ -149,7 +143,6 @@ class OrderLineController extends Controller
             ], 403);
         }
 
-        // Supprimez complètement la ligne de commande
         $orderLine->delete();
 
         return response()->json([

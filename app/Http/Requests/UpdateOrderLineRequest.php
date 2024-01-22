@@ -24,8 +24,8 @@ class UpdateOrderLineRequest extends FormRequest
         return [
             'order_id' => 'required|integer',
             'product_id' => 'required|integer',
-            'quantity' => 'required',
-            'price' => 'required',
+            'quantity' => 'required|numeric|min:1',
+            'price' => 'required|numeric|min:1'
         ];
     }
 }
