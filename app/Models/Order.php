@@ -14,14 +14,20 @@ class Order extends Model
 
     protected $guarded = ['id'];
 
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
+
+
     public function orderDelivery(): HasOne
     {
-        return $this->HasOne(OrderDelivery::class);
+        return $this->hasOne(OrderDelivery::class);
     }
 
     public function orderLines(): HasMany
     {
-        return $this->HasMany(OrderLine::class);
+        return $this->hasMany(OrderLine::class);
     }
 
     public function client(): BelongsTo
@@ -33,4 +39,5 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'restaurant_id');
     }
+
 }
