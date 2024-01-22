@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,11 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'amount' => $this->faker->randomFloat(2, 10, 100),
+            'paymentmode' => $this->faker->randomElement(['credit_card', 'paypal', 'cash']),
+            'client_id' => User::factory(),
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
     }
 }
