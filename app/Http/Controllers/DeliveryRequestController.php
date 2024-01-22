@@ -13,7 +13,8 @@ class DeliveryRequestController extends Controller
      */
     public function index()
     {
-        //
+        $deliveryRequests = DeliveryRequest::all();
+        return response()->json($deliveryRequests);
     }
 
     /**
@@ -21,7 +22,15 @@ class DeliveryRequestController extends Controller
      */
     public function store(StoreDeliveryRequestRequest $request)
     {
-        //
+              
+               $data = $request->validate([
+                'delivery_id' => 'required|exists:deliveries,id',
+                'deliver_id' => 'required|exists:users,id',
+                'status' => 'required|string',
+            ]);
+    
+            $deliveryRequest = DeliveryRequest::create($data);
+            return response()->json($deliveryRequest, 201);
     }
 
     /**
@@ -29,7 +38,8 @@ class DeliveryRequestController extends Controller
      */
     public function show(DeliveryRequest $deliveryRequest)
     {
-        //
+        $deliveryRequest = DeliveryRequest::findOrFail($deliveryRequest);
+        return response()->json($deliveryRequest);
     }
 
     /**
@@ -37,7 +47,16 @@ class DeliveryRequestController extends Controller
      */
     public function update(UpdateDeliveryRequestRequest $request, DeliveryRequest $deliveryRequest)
     {
-        //
+                $data = $request->validate([
+                    'delivery_id' => 'exists:deliveries,id',
+                    'deliver_id' => 'exists:users,id',
+                    'status' => 'string',
+                ]);
+        
+                $deliveryRequest = DeliveryRequest::findOrFail($deliveryRequest);
+                $deliveryRequest->update($data);
+        
+                return response()->json($deliveryRequest);
     }
 
     /**
@@ -45,6 +64,9 @@ class DeliveryRequestController extends Controller
      */
     public function destroy(DeliveryRequest $deliveryRequest)
     {
-        //
+               $deliveryRequest = DeliveryRequest::findOrFail($deliveryRequest);
+               $deliveryRequest->delete();
+       
+               return response()->json(null, 204);
     }
 }

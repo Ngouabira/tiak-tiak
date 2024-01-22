@@ -13,7 +13,8 @@ class DeliveryController extends Controller
      */
     public function index()
     {
-        //
+        $deliveries = Delivery::all();
+        return response()->json($deliveries);
     }
 
     /**
@@ -21,7 +22,28 @@ class DeliveryController extends Controller
      */
     public function store(StoreDeliveryRequest $request)
     {
-        //
+        $data = $request->validate([
+            'receiver_name' => 'required|string',
+            'receiver_phone' => 'required|string',
+            'startposition' => 'required|string',
+            'endposition' => 'required|string',
+            'distance' => 'required|numeric',
+            'amount' => 'required|numeric',
+            'status' => 'string',
+            'accepteddate' => 'date',
+            'comment' => 'nullable|string',
+            'note' => 'nullable|integer',
+            'startdate' => 'date',
+            'enddate' => 'date',
+            'client_id' => 'required|exists:users,id',
+            'deliver_id' => 'nullable|exists:users,id',
+        ]);
+
+        
+        $delivery = Delivery::create($data);
+
+        return response()->json($delivery, 201);
+
     }
 
     /**
@@ -29,7 +51,9 @@ class DeliveryController extends Controller
      */
     public function show(Delivery $delivery)
     {
-        //
+        $delivery = Delivery::findOrFail($delivery);
+        return response()->json($delivery);
+
     }
 
     /**
@@ -37,7 +61,28 @@ class DeliveryController extends Controller
      */
     public function update(UpdateDeliveryRequest $request, Delivery $delivery)
     {
-        //
+        $data = $request->validate([
+            'receiver_name' => 'string',
+            'receiver_phone' => 'string',
+            'startposition' => 'string',
+            'endposition' => 'string',
+            'distance' => 'numeric',
+            'amount' => 'numeric',
+            'status' => 'string',
+            'accepteddate' => 'date',
+            'comment' => 'nullable|string',
+            'note' => 'nullable|integer',
+            'startdate' => 'date',
+            'enddate' => 'date',
+            'client_id' => 'exists:users,id',
+            'deliver_id' => 'nullable|exists:users,id',
+        ]);
+
+    
+        $delivery = Delivery::findOrFail($delivery);
+        $delivery->update($data);
+
+        return response()->json($delivery);
     }
 
     /**
@@ -45,6 +90,9 @@ class DeliveryController extends Controller
      */
     public function destroy(Delivery $delivery)
     {
-        //
+        $delivery = Delivery::findOrFail($delivery);
+        $delivery->delete();
+
+        return response()->json(null, 204);
     }
 }
