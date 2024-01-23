@@ -109,9 +109,9 @@ class OrderController extends Controller
     {
         // Valider les données du formulaire
         $request->validate([
-            'client_id' => 'required',
-            'restaurant_id' => 'required',
-            'product_id' => 'required',
+            'client_id' => 'required|integer|exists:users,id',
+            'restaurant_id' => 'required|integer|exists:users,id',
+            'product_id' => 'required|integer|exists:products,id',
             'quantity' => 'required|numeric|min:1',
         ]);
 

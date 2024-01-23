@@ -22,8 +22,8 @@ class UpdateOrderLineRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id' => 'required|integer',
-            'product_id' => 'required|integer',
+            'order_id' => 'required|integer|exists:orders,id',
+            'product_id' => 'required|integer|exists:products,id',
             'quantity' => 'required|numeric|min:1',
             'price' => 'required|numeric|min:1'
         ];
