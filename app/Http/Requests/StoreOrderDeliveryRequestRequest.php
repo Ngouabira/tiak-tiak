@@ -24,7 +24,7 @@ class StoreOrderDeliveryRequestRequest extends FormRequest
         return [
             'order_id' => 'required|exists:orders,id',
             'deliver_id' => 'nullable|exists:users,id',
-            'status' => 'in:pending,accepted,completed,canceled',
+            'status' => 'in:pending,accepted,rejected',
         ];
     }
     public function messages(): array
@@ -33,7 +33,7 @@ class StoreOrderDeliveryRequestRequest extends FormRequest
             'order_id.required' => 'Order ID is required',
             'order_id.exists' => 'Order ID does not exist',
             'deliver_id.exists' => 'Deliver ID does not exist',
-            'status.in' => 'Status must be one of the following: pending, accepted, completed',
+            'status.in' => 'Status must be one of the following: pending, accepted, rejected',
         ];
     }
 }
