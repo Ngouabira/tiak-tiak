@@ -24,6 +24,8 @@ class StoreOrderRequest extends FormRequest
         return [
             'client_id' => 'required|integer',
             'restaurant_id' => 'required|integer',
+            //'client_id' => 'required|integer|exists:users,id',
+            //'restaurant_id' => 'required|integer|exists:users,id',
         ];
     }
 }

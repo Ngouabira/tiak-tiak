@@ -197,7 +197,6 @@ class OrderController extends Controller
 
         // Récupérer la commande à annuler
         $order = Order::findOrFail($orderId);
-
         // Vérifier si la commande peut être annulée (non confirmée)
         if ($order->confirmed_at !== null) {
             $data = [

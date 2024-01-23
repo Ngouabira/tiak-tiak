@@ -3,10 +3,8 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\DeliveryRequestController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDeliveryController;
 use App\Http\Controllers\OrderDeliveryRequestController;
-use App\Http\Controllers\OrderLineController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
