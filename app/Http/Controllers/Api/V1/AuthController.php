@@ -32,7 +32,7 @@ class AuthController extends Controller
         $credentials = request(['phone', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Téléphone ou mot de passe incorrect'], 401);
         }
         return response()->json([
             'access_token' => $token,
