@@ -42,7 +42,6 @@ class OrderController extends Controller
 
             // Bouclez sur les lignes de commande et associez-les à la commande
             foreach ($orderLinesData as $orderLineData) {
-                // Ajoutez l'ID de la commande à chaque ligne de commande
                 $orderLineData['order_id'] = $order->id;
 
                 $product = Product::findOrFail($orderLineData['product_id']);
