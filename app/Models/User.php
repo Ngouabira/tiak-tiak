@@ -6,15 +6,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+/**
+ * @method static create(mixed $validated)
+ * @method static where(string $string, mixed $phone)
+ */
+class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $guarded = ['id'];
+
+    /**
+     * Before create a new user, we need to hash the password
+     * @return void
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::creating(function ($user) {
+            $user->password = Hash::make($user->password);
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -50,5 +69,15 @@ class User extends Authenticatable
     public function orderDeliveries(): HasMany
     {
         return $this->hasMany(OrderDelivery::class, 'deliver_id');
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [];
     }
 }

@@ -11,7 +11,7 @@ class UpdateProfileRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,25 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Le nom est obligatoire',
+            'name.string' => 'Le nom doit être une chaîne de caractères',
+            'name.max' => 'Le nom ne doit pas dépasser 255 caractères',
+            'description.required' => 'La description est obligatoire',
+            'description.string' => 'La description doit être une chaîne de caractères',
+            'description.max' => 'La description ne doit pas dépasser 255 caractères'
         ];
     }
 }
