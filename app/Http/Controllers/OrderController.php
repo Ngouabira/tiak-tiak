@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateOrderRequest;
 use App\Models\OrderLine;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -16,32 +17,53 @@ class OrderController extends Controller
      */
     public function index()
     {
-        $orders = Order::all();
+        $orders = Order::orderBy('created_at', 'desc')->paginate(2);
         $data = [
-            'status'=>200,
-            'orders' =>$orders
+            'status' => 200,
+            'orders' => $orders
         ];
         return response()->json($data, 200);
     }
 
+
+
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(StoreOrderRequest $request)
     {
-        $validatedData = $request->validated();
-        $order = new Order;
-        $order->client_id = $validatedData['client_id'];
-        $order->restaurant_id = $validatedData['restaurant_id'];
+        try {
+            $validatedData = $request->validated();
 
-        $order->save();
-        $data = [
-            "status" => 200,
-            "message" => 'Order created successfully',
-            "order" => $order->toArray(),
-        ];
+            $order = Order::create($validatedData);
 
-        return response()->json($data, 200);
+            $orderLinesData = $validatedData['order_lines'];
+
+            // Bouclez sur les lignes de commande et associez-les à la commande
+            foreach ($orderLinesData as $orderLineData) {
+                // Ajoutez l'ID de la commande à chaque ligne de commande
+                $orderLineData['order_id'] = $order->id;
+
+                $product = Product::findOrFail($orderLineData['product_id']);
+                $productPrice = $product->price;
+
+                // Calculer le prix en fonction du produit
+                $orderLineData['price'] = $orderLineData['quantity'] * $productPrice;
+
+                OrderLine::create($orderLineData);
+            }
+
+            return response()->json([
+                'message' => 'Order created successfully',
+                'order' => $order,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while processing the request',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
@@ -64,25 +86,16 @@ class OrderController extends Controller
     public function update(UpdateOrderRequest $request, Order $order)
     {
         $validatedData = $request->validated();
-
-        if (isset($validatedData['client_id'])) {
-            $order->client_id = $validatedData['client_id'];
+        if (!$validatedData) {
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la validation des données',
+                'error' => $validatedData->errors()
+            ], 400);
         }
-
-        if (isset($validatedData['restaurant_id'])) {
-            $order->restaurant_id = $validatedData['restaurant_id'];
-        }
-
-
-        $order->save();
-
-        $data = [
-            "status" => 200,
-            "message" => 'Order updated successfully',
-            "order" => $order->toArray(),
-        ];
-
-        return response()->json($data, 200);
+        $order->update($validatedData);
+          return response()->json([
+            'message' => 'Order updated successfully',
+        ], 200);
     }
 
 

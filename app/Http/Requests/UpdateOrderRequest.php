@@ -26,4 +26,14 @@ class UpdateOrderRequest extends FormRequest
             'restaurant_id' => 'required|integer|exists:users,id',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'client_id.required' => 'Client Id is required',
+            'client_id.exists' => 'Client Id does not exist',
+            'restaurant_id.required' => 'Restaurant Id is required',
+            'restaurant_id.exists' => 'Restaurant Id does not exist',
+        ];
+    }
 }
