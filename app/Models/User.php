@@ -16,6 +16,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 /**
  * @method static create(mixed $validated)
  * @method static where(string $string, mixed $phone)
+ * @method static paginate(int $PAGINATION_SIZE)
  */
 class User extends Authenticatable implements JWTSubject
 {
