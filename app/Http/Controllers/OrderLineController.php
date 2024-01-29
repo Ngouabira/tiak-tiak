@@ -64,19 +64,10 @@ class OrderLineController extends Controller
     public function update(UpdateOrderLineRequest $request, OrderLine $orderLine)
     {
         $validatedData = $request->validated();
-
-        if (isset($validatedData['order_id'])) {
-            $orderLine->order_id = $validatedData['order_id'];
-        }
-        if (isset($validatedData['product_id'])) {
-            $orderLine->product_id = $validatedData['product_id'];
-        }
-        if (isset($validatedData['quantity'])) {
-            $orderLine->quantity = $validatedData['quantity'];
-        }
-        if (isset($validatedData['price'])) {
-            $orderLine->price = $validatedData['price'];
-        }
+        $orderLine->order_id = $validatedData['order_id'];
+        $orderLine->product_id = $validatedData['product_id'];
+        $orderLine->quantity = $validatedData['quantity'];
+        $orderLine->price = $validatedData['price'];
 
         $orderLine->save();
 

@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\DeliveryRequestController;
-use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderDeliveryController;
 use App\Http\Controllers\OrderDeliveryRequestController;
 use App\Http\Controllers\OrderLineController;
@@ -60,5 +59,7 @@ Route::apiResource('product', ProductController::class);
 Route::apiResource('order-delivery-request', OrderDeliveryRequestController::class);
 Route::apiResource('order-delivery', OrderDeliveryController::class);
 Route::apiResource('users', UsersController::class);
+
+
 
 
