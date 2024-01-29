@@ -44,7 +44,6 @@ class AuthController extends Controller
 
     /**
      * Get the authenticated User.
-     *
      * @return JsonResponse
      */
     public function me(): JsonResponse
