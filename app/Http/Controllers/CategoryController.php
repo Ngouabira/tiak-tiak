@@ -5,20 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
        $categories = Category::all();
-       $data = [
+      /* $data = [
               'status' => 200,
               'categories' => $categories,
-       ];
-         return response()->json($data);
+       ];*/
+         return response()->json([
+             'status' => 200,
+             'categories' => $categories,
+         ]);
     }
 
     /**
@@ -32,6 +36,7 @@ class CategoryController extends Controller
         $category->description = $validated['description'];
         $category->restaurant_id = $validated['restaurant_id'];
         $category->save();
+        // Category::create($validated);
 
         $data = [
             'status' => 200,
@@ -39,7 +44,7 @@ class CategoryController extends Controller
             'category' => $category,
         ];
         return response()->json($data);
-        
+
 
     }
 
@@ -54,7 +59,7 @@ class CategoryController extends Controller
             'category' => $category,
         ];
         return response()->json($data);
-        
+
     }
 
     /**
@@ -79,9 +84,9 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Category  $category): JsonResponse
     {
-        $category = Category::find($id);
+       // $category = Category::find($id);
         $category->delete();
 
         $data = [

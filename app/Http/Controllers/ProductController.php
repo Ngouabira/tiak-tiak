@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Http\JsonResponse;
 
 class ProductController extends Controller
 {
@@ -45,9 +46,9 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Product $product): JsonResponse
     {
-        $product = Product::find($id);
+       // $product = Product::find($id);
         $data = [
             'status' => 200,
             'product' => $product,
@@ -78,9 +79,9 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Product $product): JsonResponse
     {
-        $product = Product::find($id);
+       // $product = Product::find($id);
         $product->delete();
 
         $data = [
