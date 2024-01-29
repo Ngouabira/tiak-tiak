@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\OrderLine;
 use App\Http\Requests\StoreOrderLineRequest;
 use App\Http\Requests\UpdateOrderLineRequest;
+use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderLineController extends Controller
@@ -12,37 +14,49 @@ class OrderLineController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+      public function index()
     {
-        $orderLines = OrderLine::all();
+        $orderLines = OrderLine::orderBy('created_at', 'desc')->paginate(2);
+
         $data = [
-            'status'=>200,
-            'orderLines' =>$orderLines
+            'status' => 200,
+            'orderLines' => $orderLines
+            //'orderLines' => $orderLines->items(),
         ];
+
         return response()->json($data, 200);
     }
+
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreOrderLineRequest $request)
+    public function store(StoreOrderLineRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
-        $orderLine = new OrderLine;
-        $orderLine->order_id = $validatedData['order_id'];
-        $orderLine->product_id = $validatedData['product_id'];
-        $orderLine->quantity = $validatedData['quantity'];
-        $orderLine->price = $validatedData['price'];
+        try {
+            $validatedData = $request->validated();
+            $product = Product::findOrFail($validatedData['product_id']);
+            $productPrice = $product->price;
 
-        $orderLine->save();
-        $data = [
-            "status" => 200,
-            "message" => 'Order Line created successfully',
-            "orderLine" => $orderLine->toArray(),
-        ];
+            // Calculer le prix en fonction de la quantité
+            $validatedData['price'] = $validatedData['quantity'] * $productPrice;
 
-        return response()->json($data, 200);
+            $orderLine = OrderLine::create($validatedData);
+
+            return response()->json([
+                'message' => 'Order Line created successfully',
+                'orderLine' => $orderLine,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while processing the request',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
+
+
 
     /**
      * Display the specified resource.
@@ -64,20 +78,20 @@ class OrderLineController extends Controller
     public function update(UpdateOrderLineRequest $request, OrderLine $orderLine)
     {
         $validatedData = $request->validated();
-        $orderLine->order_id = $validatedData['order_id'];
-        $orderLine->product_id = $validatedData['product_id'];
-        $orderLine->quantity = $validatedData['quantity'];
-        $orderLine->price = $validatedData['price'];
 
-        $orderLine->save();
+        $orderLine->update($validatedData);
 
-        $data = [
+        // Mettez à jour le prix en fonction de la nouvelle quantité
+        if (isset($validatedData['quantity'])) {
+            $orderLine->price = $orderLine->quantity * $orderLine->product->price;
+            $orderLine->save();
+        }
+
+        return response()->json([
             "status" => 200,
             "message" => 'Order Line updated successfully',
-            "orderLine" => $orderLine->toArray(),
-        ];
-
-        return response()->json($data, 200);
+            "orderLine" => $orderLine
+        ], 200);
     }
 
 
