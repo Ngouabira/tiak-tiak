@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\OrderLine;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
@@ -15,16 +18,11 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $orders = Order::orderBy('created_at', 'desc')->paginate(2);
-        $data = [
-            'status' => 200,
-            'orders' => $orders
-        ];
-        return response()->json($data, 200);
-    }
 
+    public function index(): AnonymousResourceCollection
+    {
+        return OrderResource::collection(Order::paginate(self::PAGINATION_SIZE));
+    }
 
 
     /**
@@ -54,12 +52,12 @@ class OrderController extends Controller
             }
 
             return response()->json([
-                'message' => 'Order created successfully',
+                'message' => 'Commande ajoutée avec succès',
                 'order' => $order,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'An error occurred while processing the request',
+                'message' => 'Une erreur s\est produite lors du traitement de la demande',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -68,15 +66,11 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Order $order)
     {
-        $order = Order::find($id);
-        $data = [
-            'status'=>200,
-            'order' =>$order
-        ];
-        return response()->json($data, 200);
-
+        return response()->json([
+            'data' => new OrderResource($order)
+        ]);
     }
 
     /**
@@ -93,7 +87,7 @@ class OrderController extends Controller
         }
         $order->update($validatedData);
           return response()->json([
-            'message' => 'Order updated successfully',
+            'message' => 'Commande modifiée avec succès'
         ], 200);
     }
 
@@ -101,21 +95,19 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Order $order): JsonResponse
     {
-        $order = Order::find($id);
+        $order->orderLines()->delete();
         $order->delete();
-
-        $data = [
-            "status"=>200,
-            "message"=>'Order deleted successfully'
-        ];
-        return response()->json($data, 200);
+        return response()->json([
+            'message' => 'Commande supprimée avec succès'
+        ], 200);
     }
 
 
+
     /**
-     * Ajouter des produits au panier avant de créer une commande.
+     * Ajouter des produits avant de créer une commande.
      */
     public function addToCart(Request $request)
     {
@@ -154,7 +146,7 @@ class OrderController extends Controller
         // Calculer le prix en fonction du produit
         $totalPrice = $quantity * $productPrice;
 
-        // Ajouter le produit au panier
+        // Ajouter le produit
         $orderLine = new OrderLine();
         $orderLine->order_id = $cart->id;
         $orderLine->product_id = $product_id;
@@ -164,7 +156,7 @@ class OrderController extends Controller
 
         $data = [
             "status" => 200,
-            "message" => 'Product added to cart successfully',
+            "message" => 'Produit ajouté avec succès',
             "orderLine" => $orderLine->toArray(),
         ];
 
@@ -173,7 +165,7 @@ class OrderController extends Controller
 
 
     /**
-     * Valider la commande (confirmer le panier).
+     * Valider la commande.
      */
     public function confirmOrder(Request $request, $orderId)
     {
@@ -190,7 +182,7 @@ class OrderController extends Controller
 
         $data = [
             "status" => 200,
-            "message" => 'Order confirmed successfully',
+            "message" => 'Commande confirmée avec succès',
             "order" => $order->toArray(),
         ];
 
@@ -213,7 +205,7 @@ class OrderController extends Controller
         if ($order->confirmed_at !== null) {
             $data = [
                 "status" => 400,
-                "message" => 'Cannot cancel an order that has been confirmed.',
+                "message" => 'Il n\est pas possible d\annuler une commande qui a été confirmée.',
             ];
 
             return response()->json($data, 400);
@@ -226,7 +218,7 @@ class OrderController extends Controller
 
         $data = [
             "status" => 200,
-            "message" => 'Order cancelled successfully',
+            "message" => 'Commande annulé avec succès',
             "order" => $order->toArray(),
         ];
 
@@ -257,7 +249,7 @@ class OrderController extends Controller
         if (!$order) {
             $data = [
                 'status' => 404,
-                'message' => 'Order not found',
+                'message' => 'La Commande n\a pas été trouvé',
             ];
             return response()->json($data, 404);
         }

@@ -2,31 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\OrderLineResource;
 use App\Models\OrderLine;
 use App\Http\Requests\StoreOrderLineRequest;
 use App\Http\Requests\UpdateOrderLineRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class OrderLineController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-      public function index()
+
+    public function index(): AnonymousResourceCollection
     {
-        $orderLines = OrderLine::orderBy('created_at', 'desc')->paginate(2);
-
-        $data = [
-            'status' => 200,
-            'orderLines' => $orderLines
-            //'orderLines' => $orderLines->items(),
-        ];
-
-        return response()->json($data, 200);
+        return OrderLineResource::collection(OrderLine::paginate(self::PAGINATION_SIZE));
     }
-
 
 
     /**
@@ -45,12 +39,12 @@ class OrderLineController extends Controller
             $orderLine = OrderLine::create($validatedData);
 
             return response()->json([
-                'message' => 'Order Line created successfully',
+                'message' => 'Ligne de commande ajoutée avec succès',
                 'orderLine' => $orderLine,
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'An error occurred while processing the request',
+                'message' => 'Une erreur s\est produite lors du traitement de la demande',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -61,15 +55,11 @@ class OrderLineController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(OrderLine $orderLine)
     {
-        $orderLine = OrderLine::find($id);
-        $data = [
-            'status'=>200,
-            'orderLine' =>$orderLine
-        ];
-        return response()->json($data, 200);
-
+        return response()->json([
+            'data' => new OrderLineResource($orderLine)
+        ]);
     }
 
     /**
@@ -89,7 +79,7 @@ class OrderLineController extends Controller
 
         return response()->json([
             "status" => 200,
-            "message" => 'Order Line updated successfully',
+            "message" => 'Ligne de commande modifié avec succès',
             "orderLine" => $orderLine
         ], 200);
     }
@@ -98,16 +88,12 @@ class OrderLineController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(OrderLine $orderLine): JsonResponse
     {
-        $orderLine = OrderLine::find($id);
         $orderLine->delete();
-
-        $data = [
-            "status"=>200,
-            "message"=>'Order lines deleted successfully'
-        ];
-        return response()->json($data, 200);
+        return response()->json([
+            'message' => 'Ligne de commande supprimé avec succès'
+        ], 200);
     }
 
     /**
@@ -129,7 +115,7 @@ class OrderLineController extends Controller
 
         $data = [
             "status" => 200,
-            "message" => 'Quantity updated successfully',
+            "message" => 'Quantity modifié avec succès',
             "orderLine" => $orderLine->toArray(),
         ];
 
@@ -144,7 +130,7 @@ class OrderLineController extends Controller
         if ($orderLine->order->confirmed_at) {
             return response()->json([
                 "status" => 403,
-                "message" => 'You cannot modify a confirmed order.',
+                "message" => 'Vous ne pouvez pas modifier une commande confirmée.',
             ], 403);
         }
 
@@ -152,7 +138,7 @@ class OrderLineController extends Controller
 
         return response()->json([
             "status" => 200,
-            "message" => 'Product removed from order successfully',
+            "message" => 'Produit supprimé de la commande avec succès',
         ], 200);
     }
 
