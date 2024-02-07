@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('deliver_id')->references('id')->on('users');
 
             $table->string('status')->default('pending');
+            $table->softDeletes();
 
             $table->timestamps();
         });

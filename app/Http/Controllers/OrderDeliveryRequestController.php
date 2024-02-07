@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use App\Models\OrderDeliveryRequest;
 use App\Http\Requests\StoreOrderDeliveryRequestRequest;
 use App\Http\Requests\UpdateOrderDeliveryRequestRequest;
+use App\Http\Resources\OrderDeliveryRequestResource;
 
 class OrderDeliveryRequestController extends Controller
 {
@@ -15,10 +16,8 @@ class OrderDeliveryRequestController extends Controller
      */
     public function index()
     {
-        $orderRequest = OrderDeliveryRequest::all();
-        return response()->json([
-            'data' => $orderRequest
-        ], 201);
+        return OrderDeliveryRequestResource::collection(OrderDeliveryRequest::paginate(self::PAGINATION_SIZE));
+   
     }
 
     /**
@@ -35,9 +34,10 @@ class OrderDeliveryRequestController extends Controller
         }
         $orderDeliveryRequest = OrderDeliveryRequest::create($validated);
         return response()->json([
-            'message' => 'Order delivery Request created successfully',
+            'message' => 'Demande de livraison de commande créée avec succès',
             'data' => $orderDeliveryRequest
         ], 201);
+        
     }
 
     /**
@@ -58,15 +58,61 @@ class OrderDeliveryRequestController extends Controller
         $validated = $request->validated();
         if (!$validated) {
             return response()->json([
-                'message' => 'Invalid request',
+                'message' => 'Demande non valide',
                 'error' => $validated->errors()
             ], 400);
         }
         $orderDeliveryRequest->update($validated);
         return response()->json([
-            'message' => 'Order delivery request updated successfully',
+            'message' => 'Demande de livraison de commande mise à jour avec succès',
         ], 201);
     }
+
+//     public function accept(OrderDeliveryRequest $orderDeliveryRequest)
+// {
+//     try {
+//         $orderDeliveryRequest->update(['status' => 'accepted']);
+//         return response()->json([
+//             'message' => 'Demande de livraison de commande acceptée avec succès',
+//         ], 200);
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'message' => 'Erreur lors de lacceptation de la demande de livraison',
+//             'error' => $e->getMessage()
+//         ], 400);
+//     }
+// }
+// public function cancel(OrderDeliveryRequest $orderDeliveryRequest)
+// {
+//     try {
+//         $orderDeliveryRequest->update(['status' => 'cancelled']);
+//         return response()->json([
+//             'message' => 'Demande de livraison de commande annulée avec succès',
+//         ], 200);
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'message' => 'Erreur lors de lannulation de la demande de livraison',
+//             'error' => $e->getMessage()
+//         ], 400);
+//     }
+// }
+// public function markAsProcessing(OrderDeliveryRequest $orderDeliveryRequest)
+// {
+//     try {
+//         $orderDeliveryRequest->update(['status' => 'processing']);
+//         return response()->json([
+//             'message' => 'Demande de livraison de commande marquée comme en cours de traitement avec succès',
+//         ], 200);
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'message' => 'Erreur lors du marquage de la demande de livraison comme en cours de traitement',
+//             'error' => $e->getMessage()
+//         ], 400);
+//     }
+// }
+
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -76,13 +122,15 @@ class OrderDeliveryRequestController extends Controller
         try {
             $orderDeliveryRequest->delete();
             return response()->json([
-                'message' => 'Order delivery request deleted successfully'
+                'message' => 'Demande de livraison de commande supprimée avec succès'
             ], 201);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Error deleting order delivery request',
+                'message' => 'Erreur de suppression',
                 'error' => $e->getMessage()
             ], 400);
         }
-    }
+    
+}
+
 }

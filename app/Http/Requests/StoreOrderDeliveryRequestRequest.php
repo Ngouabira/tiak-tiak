@@ -22,18 +22,23 @@ class StoreOrderDeliveryRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id' => 'required|exists:orders,id',
-            'deliver_id' => 'nullable|exists:users,id',
-            'status' => 'in:pending,accepted,rejected',
+            'order_id' => 'required|integer|exists:orders,id',
+            'deliver_id' => 'required|integer|exists:users,id',
+            'status' => 'required',
         ];
     }
     public function messages(): array
     {
         return [
-            'order_id.required' => 'Order ID is required',
-            'order_id.exists' => 'Order ID does not exist',
-            'deliver_id.exists' => 'Deliver ID does not exist',
-            'status.in' => 'Status must be one of the following: pending, accepted, rejected',
+            'order_id.required' => 'Commande est obligatoire',
+            'order_id.integer' => 'Commande doit être un entier',
+            'order_id.exists' => 'Commande doit exister',
+            'deliver_id.required' => 'Livraison est obligatoire',
+            'deliver_id.integer' => 'Livraison doit être un entier',
+            'deliver_id.exists' => 'Livraison doit exister',
+            'status.required' => 'status est obligatoire',
+            
+            
         ];
     }
 }
